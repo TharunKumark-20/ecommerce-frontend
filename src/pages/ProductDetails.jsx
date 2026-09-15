@@ -16,6 +16,10 @@ function ProductDetails() {
   const [cartError, setCartError] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
 
+  // Railway backend URL in production
+  const API_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:9090";
+
 
   // Fetch Product
   useEffect(() => {
@@ -186,7 +190,7 @@ function ProductDetails() {
           {product.imageUrl ? (
 
             <img
-              src={`http://localhost:9090${product.imageUrl}`}
+              src={`${API_URL}${product.imageUrl}`}
               alt={product.name}
               className="product-details-image"
             />

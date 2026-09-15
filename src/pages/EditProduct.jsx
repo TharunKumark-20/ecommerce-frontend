@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import api from "../services/api";
 import "./EditProduct.css";
 
-function EditProduct() {
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:9090";
 
+function EditProduct() {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
@@ -29,16 +31,12 @@ function EditProduct() {
 
   const [loading, setLoading] = useState(true);
 
-
   // =========================================================
   // Load Product
   // =========================================================
   useEffect(() => {
-
     const fetchProduct = async () => {
-
       try {
-
         const response =
           await api.get(`/products/${id}`);
 
@@ -47,7 +45,6 @@ function EditProduct() {
           response.data
         );
 
-
         setFormData({
           name: response.data.name,
           price: response.data.price,
@@ -55,17 +52,13 @@ function EditProduct() {
           stock: response.data.stock,
         });
 
-
         setProductInfo({
           id: response.data.id,
           categoryId: response.data.categoryId,
           categoryName: response.data.categoryName,
           imageUrl: response.data.imageUrl,
         });
-
-
       } catch (error) {
-
         console.error(
           "Failed to load product:",
           error
@@ -74,71 +67,52 @@ function EditProduct() {
         setError(
           "Failed to load product."
         );
-
       } finally {
-
         setLoading(false);
-
       }
     };
 
-
     fetchProduct();
-
   }, [id]);
-
 
   // =========================================================
   // Handle Text Input
   // =========================================================
   const handleChange = (event) => {
-
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
     });
-
   };
-
 
   // =========================================================
   // Handle Image Selection
   // =========================================================
   const handleImageChange = (event) => {
-
     const selectedImage =
       event.target.files[0];
 
     if (selectedImage) {
-
       setImage(selectedImage);
-
     } else {
-
       setImage(null);
-
     }
   };
-
 
   // =========================================================
   // Update Product
   // =========================================================
   const handleSubmit = async (event) => {
-
     event.preventDefault();
 
     setError("");
 
     setMessage("");
 
-
     try {
-
       // Create multipart form data
       const productData =
         new FormData();
-
 
       productData.append(
         "id",
@@ -165,33 +139,25 @@ function EditProduct() {
         Number(formData.stock)
       );
 
-
       // Category is optional
       if (productInfo.categoryId !== null) {
-
         productData.append(
           "categoryId",
           productInfo.categoryId
         );
-
       }
-
 
       // Image is optional
       if (image) {
-
         productData.append(
           "image",
           image
         );
-
       }
-
 
       console.log(
         "Updating product..."
       );
-
 
       const response =
         await api.put(
@@ -199,12 +165,10 @@ function EditProduct() {
           productData
         );
 
-
       console.log(
         "Updated product:",
         response.data
       );
-
 
       // Update displayed image information
       setProductInfo((previous) => ({
@@ -212,10 +176,8 @@ function EditProduct() {
         imageUrl: response.data.imageUrl,
       }));
 
-
       // Clear selected file
       setImage(null);
-
 
       // Reset file input
       const imageInput =
@@ -225,95 +187,69 @@ function EditProduct() {
         imageInput.value = "";
       }
 
-
       setMessage(
         "Product updated successfully!"
       );
-
-
     } catch (error) {
-
       console.error(
         "Failed to update product:",
         error
       );
 
-
       if (
         error.response?.data?.message
       ) {
-
         setError(
           error.response.data.message
         );
-
       } else if (
         error.response?.data?.error
       ) {
-
         setError(
           error.response.data.error
         );
-
       } else {
-
         setError(
           "Failed to update product."
         );
-
       }
-
     }
-
   };
-
 
   // =========================================================
   // Loading Screen
   // =========================================================
   if (loading) {
-
     return (
       <div className="edit-product-message">
-
         <h2>
           Loading product...
         </h2>
-
       </div>
     );
-
   }
-
 
   // =========================================================
   // Product Loading Error
   // =========================================================
   if (error && !formData.name) {
-
     return (
       <div className="edit-product-message">
-
         <h2>
           {error}
         </h2>
-
       </div>
     );
-
   }
-
 
   // =========================================================
   // UI
   // =========================================================
   return (
     <div className="edit-product-page">
-
       <div className="edit-product-card">
 
         <div className="edit-product-header">
-
           <p className="edit-product-label">
             ADMIN
           </p>
@@ -325,64 +261,45 @@ function EditProduct() {
           <p>
             Update the details of your product.
           </p>
-
         </div>
 
-
         {message && (
-
           <div className="edit-product-success">
             {message}
           </div>
-
         )}
 
-
         {error && (
-
           <div className="edit-product-error">
             {error}
           </div>
-
         )}
-
 
         {/* =================================================
             Current Image
         ================================================= */}
         <div className="edit-product-image-section">
-
           <label>
             Current Product Image
           </label>
 
-
           {productInfo.imageUrl ? (
-
             <img
-              src={
-                `http://localhost:9090${productInfo.imageUrl}`
-              }
+              src={`${API_URL}${productInfo.imageUrl}`}
               alt={formData.name}
               className="edit-product-image"
             />
-
           ) : (
-
             <div className="edit-product-no-image">
               No image available
             </div>
-
           )}
-
         </div>
-
 
         {/* =================================================
             Category
         ================================================= */}
         <div className="edit-product-category">
-
           <span>
             Category
           </span>
@@ -390,9 +307,7 @@ function EditProduct() {
           <strong>
             {productInfo.categoryName || "No category"}
           </strong>
-
         </div>
-
 
         <form
           onSubmit={handleSubmit}
@@ -403,7 +318,6 @@ function EditProduct() {
               Product Name
           ================================================= */}
           <div className="edit-product-field">
-
             <label htmlFor="name">
               Product Name
             </label>
@@ -416,15 +330,12 @@ function EditProduct() {
               onChange={handleChange}
               required
             />
-
           </div>
-
 
           {/* =================================================
               Price
           ================================================= */}
           <div className="edit-product-field">
-
             <label htmlFor="price">
               Price
             </label>
@@ -439,15 +350,12 @@ function EditProduct() {
               step="0.01"
               required
             />
-
           </div>
-
 
           {/* =================================================
               Description
           ================================================= */}
           <div className="edit-product-field">
-
             <label htmlFor="description">
               Description
             </label>
@@ -459,15 +367,12 @@ function EditProduct() {
               onChange={handleChange}
               required
             />
-
           </div>
-
 
           {/* =================================================
               Stock
           ================================================= */}
           <div className="edit-product-field">
-
             <label htmlFor="stock">
               Stock
             </label>
@@ -481,15 +386,12 @@ function EditProduct() {
               min="0"
               required
             />
-
           </div>
-
 
           {/* =================================================
               New Image
           ================================================= */}
           <div className="edit-product-field">
-
             <label htmlFor="image">
               Change Product Image
             </label>
@@ -505,17 +407,13 @@ function EditProduct() {
             <small>
               Leave this empty to keep the current image.
             </small>
-
           </div>
-
 
           {/* =================================================
               Selected Image Preview
           ================================================= */}
           {image && (
-
             <div className="edit-product-new-image">
-
               <p>
                 New Image
               </p>
@@ -525,11 +423,8 @@ function EditProduct() {
                 alt="New product preview"
                 className="edit-product-image"
               />
-
             </div>
-
           )}
-
 
           {/* =================================================
               Submit
@@ -542,9 +437,7 @@ function EditProduct() {
           </button>
 
         </form>
-
       </div>
-
     </div>
   );
 }

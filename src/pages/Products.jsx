@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import api from "../services/api";
 import "./Products.css";
 
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:9090";
+
 function Products() {
 
   const [products, setProducts] = useState([]);
@@ -39,11 +42,19 @@ function Products() {
   }, []);
 
   if (loading) {
-    return <h2 className="products-message">Loading products...</h2>;
+    return (
+      <h2 className="products-message">
+        Loading products...
+      </h2>
+    );
   }
 
   if (error) {
-    return <h2 className="products-message">{error}</h2>;
+    return (
+      <h2 className="products-message">
+        {error}
+      </h2>
+    );
   }
 
   return (
@@ -53,7 +64,9 @@ function Products() {
 
       {products.length === 0 ? (
 
-        <p className="products-message">No products found.</p>
+        <p className="products-message">
+          No products found.
+        </p>
 
       ) : (
 
@@ -61,40 +74,51 @@ function Products() {
 
           {products.map((product) => (
 
-            <div className="product-card" key={product.id}>
+            <div
+              className="product-card"
+              key={product.id}
+            >
 
               {product.imageUrl ? (
+
                 <img
-                  src={`http://localhost:9090${product.imageUrl}`}
+                  src={`${API_URL}${product.imageUrl}`}
                   alt={product.name}
                   className="product-image"
                 />
+
               ) : (
+
                 <div className="no-image">
                   No Image
                 </div>
+
               )}
 
               <div className="product-info">
 
-                <h2>{product.name}</h2>
+                <h2>
+                  {product.name}
+                </h2>
 
                 <p className="product-price">
                   ₹{product.price}
                 </p>
 
-                <p>{product.description}</p>
+                <p>
+                  {product.description}
+                </p>
 
                 <p className="product-stock">
                   Stock: {product.stock}
                 </p>
 
                 <Link
-  to={`/products/${product.id}`}
-  className="details-button"
->
-  View Details
-</Link>
+                  to={`/products/${product.id}`}
+                  className="details-button"
+                >
+                  View Details
+                </Link>
 
               </div>
 
