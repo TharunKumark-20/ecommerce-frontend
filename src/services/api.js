@@ -1,7 +1,11 @@
 import axios from "axios";
 
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:9090";
+
+
 const api = axios.create({
-  baseURL: "http://localhost:9090",
+  baseURL: API_URL,
 });
 
 
@@ -99,7 +103,7 @@ api.interceptors.response.use(
          */
         const response =
           await axios.post(
-            "http://localhost:9090/auth/refresh",
+            `${API_URL}/auth/refresh`,
             {
               refreshToken: refreshToken
             }
